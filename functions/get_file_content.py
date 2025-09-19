@@ -1,4 +1,5 @@
 import os
+from google.genai import types
 
 from config import MAX_FILE_SIZE
 from utils.is_path_within_work_dir import is_path_within_work_dir
@@ -24,3 +25,16 @@ def get_file_content(working_directory, file_path):
     except Exception as e:
         return f"Error: {e}"
         
+schema_get_file_content = types.FunctionDeclaration(
+    name="get_file_content",
+    description="Reads file content in specified path. Restricted to working directory",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Relative path to the file that should be read. Path is relative to working directory.",
+            ),
+        },
+    ),
+)

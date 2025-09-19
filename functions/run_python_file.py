@@ -1,5 +1,6 @@
 import os
 import subprocess
+from google.genai import types
 
 from utils.is_path_within_work_dir import is_path_within_work_dir
 from functions.get_file_content import get_file_content
@@ -28,3 +29,23 @@ def run_python_file(working_directory, file_path, args=[]):
 
     except Exception as e:
         return f"Error: executing Python file: {e}"
+    
+schema_run_python_file = types.FunctionDeclaration(
+    name="run_python_file",
+    description="Runs python file as a subprocess. Returns stdout and stderr and formatted string. File execution is restricted to files, nested inside working directory",
+    parameters=types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "file_path": types.Schema(
+                type=types.Type.STRING,
+                description="Relative path to the file that should be executed",
+            ),
+            "args": types.Schema(
+                type=types.Type.ARRAY,
+                items=types.Schema(type=types.Type.STRING),
+                description="Optional list of additional arguments that will be passed to the subprocess",
+                default=[]
+            )
+        },
+    ),
+)
