@@ -5,6 +5,7 @@ from google import genai
 from google.genai import types
 
 from prompts import system_prompt
+from utils.call_function import call_function
 from functions.get_files_info import schema_get_files_info
 from functions.get_file_content import schema_get_file_content
 from functions.write_file import schema_write_file
@@ -49,7 +50,12 @@ def main():
         print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
     if response.function_calls:
         for function_call_part in response.function_calls:
-            print(f"Calling function: {function_call_part.name}({function_call_part.args})")
+            result = call_function(function_call_part, is_verbose)
+            if not result.parts[0].function_response.response:
+                raise Exception("Invalid response")
+            else:
+                if is_verbose:
+                    print(f"-> {result.parts[0].function_response.response}")
     else:
         print(response.text)
 
